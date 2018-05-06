@@ -513,6 +513,7 @@ void updateStatus()
         enemiesLeft--;
         P->arrowStatus = false;
         E[0].live = 0;
+        displayMaze();
     }
 
 
@@ -522,6 +523,7 @@ void updateStatus()
         enemiesLeft--;
         P->arrowStatus = false;
         E[1].live = 0;
+        displayMaze();
     }
 
     if (P->getArrowLoc().x == E[2].getEnemyLoc().x && P->getArrowLoc().y == E[2].getEnemyLoc().y && E[2].live)
@@ -530,6 +532,7 @@ void updateStatus()
         enemiesLeft--;
         P->arrowStatus = false;
         E[2].live = 0;
+        displayMaze();
     }
 
     if (P->getArrowLoc().x == E[3].getEnemyLoc().x && P->getArrowLoc().y == E[3].getEnemyLoc().y && E[3].live)
@@ -538,6 +541,7 @@ void updateStatus()
         enemiesLeft--;
         P->arrowStatus = false;
         E[3].live = 0;
+        displayMaze();
     }
 
     //----------------------------- CHECK IF PICKED UP ARROW ------------------------------------------//

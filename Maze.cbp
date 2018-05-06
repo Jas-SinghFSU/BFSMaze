@@ -55,12 +55,16 @@
 		<Unit filename="include/Enemies.h" />
 		<Unit filename="include/Maze.h" />
 		<Unit filename="include/Timer.h" />
+		<Unit filename="include/linkedList.h" />
+		<Unit filename="include/node.h" />
 		<Unit filename="include/player.h" />
 		<Unit filename="include/wall.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Enemies.cpp" />
 		<Unit filename="src/Maze.cpp" />
 		<Unit filename="src/Timer.cpp" />
+		<Unit filename="src/linkedList.cpp" />
+		<Unit filename="src/node.cpp" />
 		<Unit filename="src/player.cpp" />
 		<Unit filename="src/wall.cpp" />
 		<Extensions>
