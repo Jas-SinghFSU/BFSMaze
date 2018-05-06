@@ -450,3 +450,104 @@
 1525579333 c:\users\jas\desktop\csci115p2\maze\include\linkedlist.h
 	<node.h>
 
+1525647448 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\main.cpp
+	<string>
+	<CommonThings.h>
+	<Maze.h>
+	<iostream>
+	<Timer.h>
+	<player.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<Enemies.h>
+	<wall.h>
+	<math.h>
+	<fstream>
+	<cmath>
+	<iomanip>
+	<queue>
+
+1524046490 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\commonthings.h
+	<GL/gl.h>
+	<SOIL.h>
+	<iostream>
+	<Timer.h>
+
+1215483208 c:\users\jas\desktop\csci115p2\maze\bfsmaze\common\inc\soil.h
+
+1524046490 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\timer.h
+	<time.h>
+
+1524990871 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\maze.h
+	<CommonThings.h>
+	<string.h>
+	<gl/gl.h>
+	<GL/glut.h>
+	<SOIL.h>
+	<iostream>
+	<Timer.h>
+	<math.h>
+
+1489447130 c:\users\jas\desktop\csci115p2\maze\bfsmaze\common\inc\gl\glut.h
+	<windows.h>
+	<stdlib.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1524993230 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\player.h
+	<CommonThings.h>
+	<string.h>
+	<gl/gl.h>
+	<GL/glut.h>
+	<SOIL.h>
+	<iostream>
+	<Timer.h>
+	<math.h>
+
+1524475098 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\enemies.h
+	<CommonThings.h>
+	<Maze.h>
+	<time.h>
+	<thread>
+	<string>
+	<math.h>
+
+1524475940 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\wall.h
+	<CommonThings.h>
+	<string.h>
+	<gl/gl.h>
+	<GL/glut.h>
+	<SOIL.h>
+	<iostream>
+	<Timer.h>
+	<math.h>
+
+1525578832 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\node.h
+
+1524949692 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\enemies.cpp
+	<Enemies.h>
+	<iostream>
+
+1525579168 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\linkedlist.cpp
+	"linkedList.h"
+
+1525579333 c:\users\jas\desktop\csci115p2\maze\bfsmaze\include\linkedlist.h
+	<node.h>
+
+1525131861 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\maze.cpp
+	<Maze.h>
+
+1525578885 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\node.cpp
+	"node.h"
+
+1525131314 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\player.cpp
+	<Player.h>
+
+1524046490 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\timer.cpp
+	"Timer.h"
+
+1524960386 source:c:\users\jas\desktop\csci115p2\maze\bfsmaze\src\wall.cpp
+	<wall.h>
+	<iostream>
+

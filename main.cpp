@@ -25,12 +25,32 @@
 #include<fstream>
 #include<cmath>
 #include<iomanip>
-
-#include <node.h>
+#include <queue>
+//#include <node.h>
 
 /* Node structure creation for adjacency list*/
+struct node{
+
+       struct node *next;
+        int i;
+        int j;
+        node()
+        {
+            next = nullptr;
+        }
+};
 
 
+struct path{
+        int i;
+        int j;
+        path* parent;
+        path()
+        {
+            i = -1;
+            j = -1;
+        }
+};
 /* GLUT callback Handlers */
 
 using namespace std;
@@ -58,19 +78,24 @@ bool chestPlaced = false; //Has the chest been placed?
 
 int enemiesLeft = 4;
 
+/* All BFS elements*/
 node *adjList[13][13];
+bool visited[13][13];
+path pathway[500];
+path En1, En2, En3, En4;
+queue<path> Queue;
 
-
-
+/* Game win/lose booleans */
 bool isAlive = true;
 bool isWin = false;
 
-void display(void);                             // Main Display : this runs in a loop
+
 
 /* Function Prototypes */
-
+void display(void);  // Main Display : this runs in a loop
 void displayMaze();
 void addEdges();
+void BFS(path*);
 
 void resize(int width, int height)              // resizing case on the window
 {
@@ -86,7 +111,6 @@ void resize(int width, int height)              // resizing case on the window
 void init()
 {
     glEnable(GL_COLOR_MATERIAL);
-
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
@@ -194,6 +218,21 @@ void init()
     addEdges();
     displayMaze();
 
+    //----------------------------------Set visited nodes to false ----------------------------//
+    for (int i = 0; i < 13; i++)
+    {
+        for (int j=0; j < 13; j++)
+        {
+            visited[i][j] = false;
+        }
+    }
+
+
+    En1.i = 12-E[0].getEnemyLoc().y;
+    En1.j = E[0].getEnemyLoc().x;
+
+    cout << endl << "(" << En1.i << "," << En1.j << ") ->";
+
 }
 
 void addEdges()
@@ -202,33 +241,100 @@ void addEdges()
     node *temp = new node();
     for (int i = 0; i < 13; i++)
     {
+
         for(int j = 0; j < 13; j++)
         {
-            //adjList[i][j]->next = temp; ///causes crash
+            adjList[i][j] = new node();
+            adjList[i][j]->i = i;
+            adjList[i][j]->j = j;
+
+            tail = adjList[i][j];
+            cout << endl << "(" << i << "," << j << ") ->";
             if (myArray[i-1][j] != '~' && i > 0) //if there is a wall or you are at the edge then don't add it to the adjacency list
             {
-                ///tail = new node(i-1,j);
-                ///tail = tail->next;
+                tail->next = new node();
+                tail = tail->next;
+                tail->i = i-1;
+                tail->j = j;
+                cout << "(" << tail->i << "," << tail->j << ") ->";
             }
-            if (myArray[i+1][j] != '~' && i < 13)
+            if (myArray[i+1][j] != '~' && i < 12)
             {
-                //tail = new node(i+1,j);
-                //tail = tail->next;
+                tail->next = new node();
+                tail = tail->next;
+                tail->i = i+1;
+                tail->j = j;
+                cout << "(" << tail->i << "," << tail->j << ") ->";
             }
             if (myArray[i][j-1] != '~' && j > 0)
             {
-                //tail = new node(i,j-1);
-                //tail = tail->next;
+                tail->next = new node();
+                tail = tail->next;
+                tail->i = i;
+                tail->j = j-1;
+                cout << "(" << tail->i << "," << tail->j << ") ->";
             }
-            if (myArray[i][j+1] != '~' && j < 13)
+            if (myArray[i][j+1] != '~' && j < 12)
             {
-                //tail = new node(i,j+1);
-                //tail = tail->next;
+                tail->next = new node();
+                tail = tail->next;
+                tail->i = i;
+                tail->j = j+1;
+                cout << "(" << tail->i << "," << tail->j << ") ->";
+
             }
+            tail->next = nullptr;
         }
     }
 }
 
+void BFS(path s)
+{
+    Queue.push(s);
+
+    path x;
+    int n=0;
+    while (!Queue.empty())
+    {
+        x = Queue.front();
+        cout << "(" << x.i << ", " << x.j << ")" << endl;
+        Queue.pop();
+
+        node* temp = adjList[x.i][x.j];
+
+        cout << " Back" << endl;
+        while(temp != nullptr)
+        {
+            if(!visited[temp->i][temp->j])
+            {
+                visited[temp->i][temp->j] = true;
+                path temp_path;
+                temp_path.i = temp->i;
+                temp_path.j = temp->j;
+
+
+
+                cout << "(" << temp_path.i << ", " << temp_path.j << ")" << endl;
+                Queue.push(temp_path);
+            }
+            temp = temp->next;
+        }
+    }
+}
+
+void displayPath()
+{
+    cout << endl << endl << endl << endl << "Pathway:" << endl;
+    for (int i = 0; i < 500; i++)
+    {
+        cout << "(" << pathway[i].i << "," << pathway[i].j << ") -> ";
+
+        if(pathway[i].i == -1)
+            return;
+    }
+
+    cout << endl << endl << endl ;
+}
 
 void display(void)
 {
@@ -305,7 +411,7 @@ void display(void)
 
 void displayMaze()
 {
-    system("CLS");
+    /*system("CLS");
     for(int i = 0; i < 13; ++i)
     {
         for(int j = 0; j < 13; ++j)
@@ -313,7 +419,7 @@ void displayMaze()
             cout << myArray[i][j] << " ";
         }
         cout << endl;
-    }
+    }*/
     glutPostRedisplay();
 }
 
@@ -412,6 +518,8 @@ void Specialkeys(int key, int x, int y)
     switch(key)
     {
     case GLUT_KEY_UP:
+        BFS(En1);
+        displayPath();
         if (myArray[12-P->getPlayerLoc().y-1][(P->getPlayerLoc().x)] != '~')
         {
             P->movePlayer("up");
@@ -429,11 +537,12 @@ void Specialkeys(int key, int x, int y)
         }
 
         displayMaze();
-         cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
     break;
 
     case GLUT_KEY_DOWN:
+        BFS(En1);
         if (myArray[12-P->getPlayerLoc().y+1][(P->getPlayerLoc().x)] != '~')
         {
             P->movePlayer("down");
@@ -452,11 +561,12 @@ void Specialkeys(int key, int x, int y)
             }
         }
         displayMaze();
-         cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
     break;
 
     case GLUT_KEY_LEFT:
+        BFS(En1);
         if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x-1)] != '~')
         {
             P->movePlayer("left");
@@ -473,11 +583,12 @@ void Specialkeys(int key, int x, int y)
             }
         }
         displayMaze();
-         cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
     break;
 
     case GLUT_KEY_RIGHT:
+        BFS(En1);
         if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x+1)] != '~')
         {
             P->movePlayer("right");
@@ -494,7 +605,7 @@ void Specialkeys(int key, int x, int y)
             }
         }
         displayMaze();
-         cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
     break;
 
 
