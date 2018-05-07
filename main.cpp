@@ -28,6 +28,9 @@
 #include <queue>
 //#include <node.h>
 
+/* Input delay timer so you can't hold down the move key and go crazy fast*/
+
+Timer* inputTimer = new Timer();
 /* Node structure creation for adjacency list*/
 struct node{
 
@@ -172,6 +175,7 @@ void init()
     P->initPlayer(M->getGridSize(),6,"images/p.png");   // initialize player pass grid size,image and number of frames
     P->loadArrowImage("images/arr.png");                // Load arrow image
 
+    inputTimer->Start();
 
     //---------------------------------- PUT ELEMENTS INTO THE MAZE FROM TEXT FILE ---------------------------------//
     ifstream indata("\mazeLayout.txt"); //that's my path,you should use yours.
@@ -444,27 +448,31 @@ void moveEn1()
         temp1 = trailDad[En1.i][En1.j].i;
         temp2 = trailDad[En1.i][En1.j].j;
 
-        if(temp1 == En1.i+1)
+        if(myArray[temp1][temp2] != 'X')
         {
-            E[0].moveEnemy("down");
-        }
-        if(temp1 == En1.i-1)
-        {
-            E[0].moveEnemy("up");
-        }
-        if(temp2 == En1.j+1)
-        {
-            E[0].moveEnemy("right");
-        }
-        if(temp2 == En1.j-1)
-        {
-            E[0].moveEnemy("left");
+            if(temp1 == En1.i+1)
+            {
+                E[0].moveEnemy("down");
+            }
+            if(temp1 == En1.i-1)
+            {
+                E[0].moveEnemy("up");
+            }
+            if(temp2 == En1.j+1)
+            {
+                E[0].moveEnemy("right");
+            }
+            if(temp2 == En1.j-1)
+            {
+                E[0].moveEnemy("left");
+            }
+
+            En1.i = temp1;
+            En1.j = temp2;
+
+            myArray[temp1][temp2] = 'X';
         }
 
-        En1.i = temp1;
-        En1.j = temp2;
-
-        myArray[temp1][temp2] = 'X';
 
         //E[0].placeEnemy(temp2,12-temp1);
     }
@@ -545,8 +553,8 @@ void display(void)
 }
 
 void displayMaze()
-{/*
-    system("CLS");
+{
+    /*system("CLS");
     for(int i = 0; i < 13; ++i)
     {
         for(int j = 0; j < 13; ++j)
@@ -554,8 +562,8 @@ void displayMaze()
             cout << myArray[i][j] << " ";
         }
         cout << endl;
-    }*/
-    glutPostRedisplay();
+    }
+    glutPostRedisplay();*/
 }
 
 void key(unsigned char key, int x, int y)
@@ -657,6 +665,9 @@ void Specialkeys(int key, int x, int y)
         {
         case GLUT_KEY_UP:
 
+        if(inputTimer->GetTicks() >= 100)
+        {
+            inputTimer->Reset();
             if (myArray[12-P->getPlayerLoc().y-1][(P->getPlayerLoc().x)] != '~')
             {
                 P->movePlayer("up");
@@ -679,9 +690,16 @@ void Specialkeys(int key, int x, int y)
            displayMaze();
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
+        }
+
+
         break;
 
         case GLUT_KEY_DOWN:
+
+        if(inputTimer->GetTicks() >= 100)
+        {
+            inputTimer->Reset();
             if (myArray[12-P->getPlayerLoc().y+1][(P->getPlayerLoc().x)] != '~')
             {
                 P->movePlayer("down");
@@ -704,10 +722,15 @@ void Specialkeys(int key, int x, int y)
             moveEn1();
             displayMaze();
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+        }
 
         break;
 
         case GLUT_KEY_LEFT:
+
+        if(inputTimer->GetTicks() >= 100)
+        {
+            inputTimer->Reset();
             if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x-1)] != '~')
             {
                 P->movePlayer("left");
@@ -730,10 +753,14 @@ void Specialkeys(int key, int x, int y)
             displayMaze();
 
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+        }
 
         break;
 
         case GLUT_KEY_RIGHT:
+        if(inputTimer->GetTicks() >= 100)
+        {
+            inputTimer->Reset();
             if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x+1)] != '~')
             {
                 P->movePlayer("right");
@@ -756,6 +783,7 @@ void Specialkeys(int key, int x, int y)
             moveEn1();
             displayMaze();
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+        }
         break;
 
 
