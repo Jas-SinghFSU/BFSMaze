@@ -89,6 +89,7 @@ bool chestPlaced = false; //Has the chest been placed?
 int enemiesLeft = 4;
 
 /* All BFS elements*/
+//Enemy 1
 node *adjList[13][13];
 bool visited[13][13];
 path pathway[169];
@@ -97,6 +98,33 @@ parent trailDad[13][13];
 path En1, En2, En3, En4;
 queue<path> Queue;
 path playerPath;
+
+//Enemy 2
+node *adjList2[13][13];
+bool visited2[13][13];
+path pathway2[169];
+parent trail2[13][13];
+parent trailDad2[13][13];
+queue<path> Queue2;
+path playerPath2;
+
+//Enemy 3
+node *adjList3[13][13];
+bool visited3[13][13];
+path pathway3[169];
+parent trail3[13][13];
+parent trailDad3[13][13];
+queue<path> Queue3;
+path playerPath3;
+
+//Enemy 4
+node *adjList4[13][13];
+bool visited4[13][13];
+path pathway4[169];
+parent trail4[13][13];
+parent trailDad4[13][13];
+queue<path> Queue4;
+path playerPath4;
 
 /* Game win/lose booleans */
 bool isAlive = true;
@@ -329,6 +357,12 @@ void resetTrail()
         {
             trailDad[i][j].i = -1;
             trailDad[i][j].j = -1;
+            trailDad2[i][j].i = -1;
+            trailDad2[i][j].j = -1;
+            trailDad3[i][j].i = -1;
+            trailDad3[i][j].j = -1;
+            trailDad4[i][j].i = -1;
+            trailDad4[i][j].j = -1;
         }
     }
 }
@@ -374,7 +408,7 @@ void BFS(path s)
 }
 
 void displayPath(path plyr)
-{
+{/*
     cout << endl << endl << endl << endl << "Pathway:" << endl;
     int x = En1.i;
     int y = En1.j;
@@ -396,11 +430,45 @@ void displayPath(path plyr)
     cout << " (" << x << "," << y << ") -> ";
 
 
-    cout << endl << endl << endl ;
+    cout << endl << endl << endl ;*/
 }
 
 void moveEn1()
 {
+    if(E[0].live)
+    {
+        myArray[En1.i][En1.j] = 'O';
+        int temp1;
+        int temp2;
+
+        temp1 = trailDad[En1.i][En1.j].i;
+        temp2 = trailDad[En1.i][En1.j].j;
+
+        if(temp1 == En1.i+1)
+        {
+            E[0].moveEnemy("down");
+        }
+        if(temp1 == En1.i-1)
+        {
+            E[0].moveEnemy("up");
+        }
+        if(temp2 == En1.j+1)
+        {
+            E[0].moveEnemy("right");
+        }
+        if(temp2 == En1.j-1)
+        {
+            E[0].moveEnemy("left");
+        }
+
+        En1.i = temp1;
+        En1.j = temp2;
+
+        myArray[temp1][temp2] = 'X';
+
+        //E[0].placeEnemy(temp2,12-temp1);
+    }
+    //E[0].placeEnemy(7,12-3);
 
 }
 void display(void)
@@ -477,7 +545,7 @@ void display(void)
 }
 
 void displayMaze()
-{
+{/*
     system("CLS");
     for(int i = 0; i < 13; ++i)
     {
@@ -486,7 +554,7 @@ void displayMaze()
             cout << myArray[i][j] << " ";
         }
         cout << endl;
-    }
+    }*/
     glutPostRedisplay();
 }
 
@@ -578,6 +646,7 @@ void mouse(int btn, int state, int x, int y){
      glutPostRedisplay();
 };
 
+
 void Specialkeys(int key, int x, int y)
 {
 
@@ -606,7 +675,7 @@ void Specialkeys(int key, int x, int y)
             }
             BFS(playerPath);
             displayPath(playerPath);
-
+            moveEn1();
            displayMaze();
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
@@ -632,6 +701,7 @@ void Specialkeys(int key, int x, int y)
             }
             BFS(playerPath);
             displayPath(playerPath);
+            moveEn1();
             displayMaze();
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
@@ -656,7 +726,9 @@ void Specialkeys(int key, int x, int y)
             }
             BFS(playerPath);
             displayPath(playerPath);
+            moveEn1();
             displayMaze();
+
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
         break;
@@ -681,6 +753,7 @@ void Specialkeys(int key, int x, int y)
             }
             BFS(playerPath);
             displayPath(playerPath);
+            moveEn1();
             displayMaze();
              //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
         break;
