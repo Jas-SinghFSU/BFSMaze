@@ -51,6 +51,16 @@ struct path{
             j = -1;
         }
 };
+
+struct parent{
+    int i;
+    int j;
+    parent()
+        {
+            i = -1;
+            j = -1;
+        }
+};
 /* GLUT callback Handlers */
 
 using namespace std;
@@ -81,9 +91,12 @@ int enemiesLeft = 4;
 /* All BFS elements*/
 node *adjList[13][13];
 bool visited[13][13];
-path pathway[500];
+path pathway[169];
+parent trail[13][13];
+parent trailDad[13][13];
 path En1, En2, En3, En4;
 queue<path> Queue;
+path playerPath;
 
 /* Game win/lose booleans */
 bool isAlive = true;
@@ -178,6 +191,8 @@ void init()
                     plyY = j;
                     plyX = i;
                     playerPlaced = true;
+                    playerPath.i = i;
+                    playerPath.j = j;
                 }
                 else
                     myArray[i][j] = 'O';
@@ -231,10 +246,28 @@ void init()
     En1.i = 12-E[0].getEnemyLoc().y;
     En1.j = E[0].getEnemyLoc().x;
 
-    cout << endl << "(" << En1.i << "," << En1.j << ") ->";
+    En2.i = 12-E[1].getEnemyLoc().y;
+    En2.j = E[1].getEnemyLoc().x;
+
+    En3.i = 12-E[2].getEnemyLoc().y;
+    En3.j = E[2].getEnemyLoc().x;
+
+    En4.i = 12-E[3].getEnemyLoc().y;
+    En4.j = E[3].getEnemyLoc().x;
+
 
 }
 
+void resetVisited()
+{
+    for (int i = 0; i < 13; i++)
+    {
+        for (int j=0; j < 13; j++)
+        {
+            visited[i][j] = false;
+        }
+    }
+}
 void addEdges()
 {
     node *tail = new node();
@@ -288,21 +321,36 @@ void addEdges()
     }
 }
 
+void resetTrail()
+{
+    for(int i = 0; i < 13; i++)
+    {
+        for (int j = 0; j < 13; j++)
+        {
+            trailDad[i][j].i = -1;
+            trailDad[i][j].j = -1;
+        }
+    }
+}
 void BFS(path s)
 {
+    resetVisited();
+    resetTrail();
+    Queue = queue<path> ();
     Queue.push(s);
 
     path x;
-    int n=0;
+
+
     while (!Queue.empty())
     {
         x = Queue.front();
-        cout << "(" << x.i << ", " << x.j << ")" << endl;
+        //cout << "(" << x.i << ", " << x.j << ")" << endl;
         Queue.pop();
 
         node* temp = adjList[x.i][x.j];
 
-        cout << " Back" << endl;
+        //cout << " Back" << endl;
         while(temp != nullptr)
         {
             if(!visited[temp->i][temp->j])
@@ -312,9 +360,12 @@ void BFS(path s)
                 temp_path.i = temp->i;
                 temp_path.j = temp->j;
 
+                trailDad[temp->i][temp->j].i = x.i;
+                trailDad[temp->i][temp->j].j = x.j;
 
 
-                cout << "(" << temp_path.i << ", " << temp_path.j << ")" << endl;
+
+                //cout << "(" << temp_path.i << ", " << temp_path.j << ")" << endl;
                 Queue.push(temp_path);
             }
             temp = temp->next;
@@ -322,20 +373,36 @@ void BFS(path s)
     }
 }
 
-void displayPath()
+void displayPath(path plyr)
 {
     cout << endl << endl << endl << endl << "Pathway:" << endl;
-    for (int i = 0; i < 500; i++)
-    {
-        cout << "(" << pathway[i].i << "," << pathway[i].j << ") -> ";
+    int x = En1.i;
+    int y = En1.j;
 
-        if(pathway[i].i == -1)
-            return;
-    }
+    int tempX;
+    int tempY;
+    //cout << " (" << trailDad[6][5].i << "," << trailDad[6][5].j << ") -> ";
+    do
+    {
+        cout << " (" << x << "," << y << ") -> ";
+
+        tempX = trailDad[x][y].i;
+        tempY = trailDad[x][y].j;
+
+        x = tempX;
+        y = tempY;
+    }while (!(x == plyr.i && y == plyr.j));
+
+    cout << " (" << x << "," << y << ") -> ";
+
 
     cout << endl << endl << endl ;
 }
 
+void moveEn1()
+{
+
+}
 void display(void)
 {
   glClear (GL_COLOR_BUFFER_BIT);        // clear display screen
@@ -411,7 +478,7 @@ void display(void)
 
 void displayMaze()
 {
-    /*system("CLS");
+    system("CLS");
     for(int i = 0; i < 13; ++i)
     {
         for(int j = 0; j < 13; ++j)
@@ -419,7 +486,7 @@ void displayMaze()
             cout << myArray[i][j] << " ";
         }
         cout << endl;
-    }*/
+    }
     glutPostRedisplay();
 }
 
@@ -514,104 +581,116 @@ void mouse(int btn, int state, int x, int y){
 void Specialkeys(int key, int x, int y)
 {
 
-    // Your Code here
-    switch(key)
+    if(isAlive && !isWin)
     {
-    case GLUT_KEY_UP:
-        BFS(En1);
-        displayPath();
-        if (myArray[12-P->getPlayerLoc().y-1][(P->getPlayerLoc().x)] != '~')
+        // Your Code here
+        switch(key)
         {
-            P->movePlayer("up");
-            if(plyY > 0)
+        case GLUT_KEY_UP:
+
+            if (myArray[12-P->getPlayerLoc().y-1][(P->getPlayerLoc().x)] != '~')
             {
-                int temp = plyY-1;
-                if (!(myArray[temp][plyX] == 'X'))
+                P->movePlayer("up");
+                if(plyX > 0)
                 {
-                myArray[plyY][plyX] = 'O';
-                plyY--;
-                myArray[plyY][plyX] = 'P';
+                    playerPath.i--;
+                    int temp = plyX-1;
+                    if (!(myArray[temp][plyY] == 'X'))
+                    {
+                    myArray[plyX][plyY] = 'O';
+                    plyX--;
+                    myArray[plyX][plyY] = 'P';
+                    }
+
                 }
-
             }
-        }
+            BFS(playerPath);
+            displayPath(playerPath);
 
-        displayMaze();
-         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+           displayMaze();
+             //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
-    break;
+        break;
 
-    case GLUT_KEY_DOWN:
-        BFS(En1);
-        if (myArray[12-P->getPlayerLoc().y+1][(P->getPlayerLoc().x)] != '~')
-        {
-            P->movePlayer("down");
-
-            if(plyY < 12)
+        case GLUT_KEY_DOWN:
+            if (myArray[12-P->getPlayerLoc().y+1][(P->getPlayerLoc().x)] != '~')
             {
-                int temp = 1+plyY;
-                if (!(myArray[temp][plyX] == 'X'))
+                P->movePlayer("down");
+
+                if(plyX < 12)
                 {
-                myArray[plyY][plyX] = 'O';
-                plyY++;
-                myArray[plyY][plyX] = 'P';
+                    playerPath.i++;
+                    int temp = plyX+1;
+                    if (!(myArray[temp][plyY] == 'X'))
+                    {
+                    myArray[plyX][plyY] = 'O';
+                    plyX++;
+                    myArray[plyX][plyY] = 'P';
+                    }
+
                 }
-
-
             }
-        }
-        displayMaze();
-         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+            BFS(playerPath);
+            displayPath(playerPath);
+            displayMaze();
+             //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
-    break;
+        break;
 
-    case GLUT_KEY_LEFT:
-        BFS(En1);
-        if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x-1)] != '~')
-        {
-            P->movePlayer("left");
-            if(plyX > 0)
+        case GLUT_KEY_LEFT:
+            if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x-1)] != '~')
             {
-                int temp = plyX-1;
-                if (!(myArray[plyY][temp] == 'X'))
+                P->movePlayer("left");
+                if(plyY > 0)
                 {
-                myArray[plyY][plyX] = 'O';
-                plyX--;
-                myArray[plyY][plyX] = 'P';
+
+                    playerPath.j--;
+                    int temp = plyY-1;
+                    if (!(myArray[plyX][temp] == 'X'))
+                    {
+                    myArray[plyX][plyY] = 'O';
+                    plyY--;
+                    myArray[plyX][plyY] = 'P';
+                    }
                 }
-
             }
-        }
-        displayMaze();
-         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+            BFS(playerPath);
+            displayPath(playerPath);
+            displayMaze();
+             //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
 
-    break;
+        break;
 
-    case GLUT_KEY_RIGHT:
-        BFS(En1);
-        if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x+1)] != '~')
-        {
-            P->movePlayer("right");
-            if(plyX < 12)
+        case GLUT_KEY_RIGHT:
+            if (myArray[12-P->getPlayerLoc().y][(P->getPlayerLoc().x+1)] != '~')
             {
-                int temp = 1+plyX;
-                if (!(myArray[plyY][temp] == 'X'))
+                P->movePlayer("right");
+                if(plyY < 12)
                 {
-                myArray[plyY][plyX] = 'O';
-                plyX++;
-                myArray[plyY][plyX] = 'P';
+
+                    playerPath.j++;
+                    int temp = plyY+1;
+                    if (!(myArray[plyX][temp] == 'X'))
+                    {
+                    myArray[plyX][plyY] = 'O';
+                    plyY++;
+                    myArray[plyX][plyY] = 'P';
+                    }
+
                 }
-
             }
-        }
-        displayMaze();
-         //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
-    break;
+            BFS(playerPath);
+            displayPath(playerPath);
+            displayMaze();
+             //cout<< P->getPlayerLoc().x<< "    "<<P->getPlayerLoc().y<<endl;
+        break;
 
 
 
-   }
-  glutPostRedisplay();
+       }
+      glutPostRedisplay();
+
+    }
 }
 
 void updateStatus()
@@ -695,6 +774,7 @@ int main(int argc, char *argv[])
    glutReshapeFunc(resize);                      //callback for reshape
    glutKeyboardFunc(key);                        //callback function for keyboard
    glutSpecialFunc(Specialkeys);
+
    glutMouseFunc(mouse);
    glutIdleFunc(idle);
    glutIdleFunc(updateStatus);
